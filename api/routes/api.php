@@ -30,15 +30,17 @@ Route::delete('empresa/{id}', 'empresaController@eliminar')->middleware('token')
 Route::patch('empresa/{id}', 'empresaController@cambiarEstado')->middleware('token');
 // *********************************************************
 
-use App\Http\Controllers\localController;
+use App\Http\Controllers\LocalController;
 
-Route::post('/local/nuevo',[localController::class, 'Nuevo']);
-Route::post('/local/edit/{Codigo}',[localController::class, 'EditLocal']);
-Route::get("local/lista",[localController::class, 'Listar']);
-Route::get("/local/buscar/{Nombre}",[localController::class, 'Buscar']);
-Route::get("/local/buscar/empresa/{CodigoEmpresa}",[localController::class, 'BuscarLocalEmpresa']);
-Route::get("/local/buscar/Codigo/{Codigo}",[localController::class, 'BuscarCodigo']);
-Route::get("/locales",[localController::class, 'Listar']);
-Route::DELETE("/local/{codigo}",[localController::class, 'Eliminar']);
-Route::get("local/Empresas",[localController::class, 'mostrarEmpresas']);
-Route::patch("/local/{Vigencia}",[localController::class, 'cambiarEstadoLocal']);
+Route::post('locales','LocalController@registrar');
+Route::post('locales/{Codigo}','LocalController@actualizar');
+Route::get("locales/{Codigo}",'LocalController@BuscarCodigo');
+Route::get("locales",'LocalController@Listar');
+Route::patch("locales/{Vigencia}",[LocalController::class, 'cambiarEstadoLocal']);
+
+
+// Route::get("/Local/buscar/{Nombre}",[LocalController::class, 'Buscar']);
+// Route::get("/Local/buscar/empresa/{CodigoEmpresa}",[LocalController::class, 'BuscarLocalEmpresa']);
+// Route::get("/Locales",[LLocalController::class, 'Listar']);
+// Route::DELETE("/Local/{codigo}",[LocalController::class, 'Eliminar']);
+// Route::get("Local/Empresas",[LocalController::class, 'mostrarEmpresas']);

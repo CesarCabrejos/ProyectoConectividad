@@ -18,7 +18,7 @@ const routes = [
     component: () => import("../views/Empresa.vue"),
   },
   {
-    path: "/local",
+    path: "/Local",
     name: "Local",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route

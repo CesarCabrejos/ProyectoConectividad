@@ -3,54 +3,36 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\local;
+use App\Local;
 use Illuminate\Support\Facades\DB;
 
-class localController extends Controller
+class LocalController extends Controller
 {
-    public function Listar()
+    public function registrar(REQUEST $resquest)
     {
-        $data = local::all();
-        return response()->json($data, 200);
-    }    
-
-    public function Buscar($Nombre)
-    {
-        $data = local::where('Nombre','LIKE','%'.$Nombre.'%')->get();
-        return response()->json($data, 200);
-    }
-
-    public function BuscarCodigo($Codigo)
-    {
-        $data = local::find($Codigo);
-        return response()->json($data, 200);
-    }
-
-    public function Nuevo(REQUEST $resquest)
-    {
-        $local = new local();
-        $local->Nombre = $resquest->Nombre;
-        $local->CodigoEmpresa = $resquest->CodigoEmpresa;
-        $local->Direccion = $resquest->Direccion;
-        $local->Telefono = $resquest->Telefono;
-        $local->Vigencia = 1;
-        $local->save();
+        $Local = new Local();
+        $Local->Nombre = $resquest->Nombre;
+        $Local->CodigoEmpresa = (!empty($resquest->CodigoEmpresa) && $resquest->CodigoEmpresa != "undefined")?$resquest->CodigoEmpresa:1;
+        $Local->Direccion = $resquest->Direccion;
+        $Local->Telefono = $resquest->Telefono;
+        $Local->Vigencia = 1;
+        $Local->save();
         $data = [
             "Registro" => "EXITOSO"
         ];
         return response()->json($data, 200);
     }
 
-    public function EditLocal(REQUEST $resquest, $Codigo)
+    public function actualizar(REQUEST $resquest, $Codigo)
     {
-        $local = local ::find($Codigo);
-        if ($local != null) {
-            $local->Nombre = $resquest->Nombre;
+        $Local = Local ::find($Codigo);
+        if ($Local != null) {
+            $Local->Nombre = $resquest->Nombre;
             //$local->CodigoEmpresa = $resquest->CodigoEmpresa;
-            $local->Direccion = $resquest->Direccion;
-            $local->Telefono = $resquest->Telefono;
-            $local->Vigencia = 1;
-            $local->save();
+            $Local->Direccion = $resquest->Direccion;
+            $Local->Telefono = $resquest->Telefono;
+            $Local->Vigencia = 1;
+            $Local->save();
             $data = [
                 "Modificacion" => "EXITOSO"
             ];
@@ -64,15 +46,33 @@ class localController extends Controller
         
     }
 
+    public function Listar()
+    {
+        $data = Local::all();
+        return response()->json($data, 200);
+    }    
+
+    public function Buscar($Nombre)
+    {
+        $data = Local::where('Nombre','LIKE','%'.$Nombre.'%')->get();
+        return response()->json($data, 200);
+    }
+
+    public function BuscarCodigo($Codigo)
+    {
+        $data = Local::find($Codigo);
+        return response()->json($data, 200);
+    }
+
     public function BuscarLocalEmpresa($CodigoEmpresa)
     {
-        $data = local::where('codigoEmpresa','=',$CodigoEmpresa)->get();
+        $data = Local::where('codigoEmpresa','=',$CodigoEmpresa)->get();
         return response()->json($data, 200);
     }
 
     public function Eliminar($Codigo)
     {
-        $data = local::find($Codigo);
+        $data = Local::find($Codigo);
         $data->delete();
         return response()->json(true, 200);
     }
@@ -92,11 +92,11 @@ class localController extends Controller
 
     public function cambiarEstadoLocal($Codigo)
     {
-        $local = local::findOrFail($Codigo);
-        $local->Vigencia = !$local->Vigencia;
-        $local->save();
+        $Local = Local::findOrFail($Codigo);
+        $Local->Vigencia = !$Local->Vigencia;
+        $Local->save();
 
-        return response()->json($local, 200);
+        return response()->json($Local, 200);
     }
 
 }

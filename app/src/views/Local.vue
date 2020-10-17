@@ -57,7 +57,7 @@
                 <v-text-field
                   :disabled="ver"
                   v-model="Telefono"
-                  label="Telefono"
+                  label="Teléfono"
                   type="number"
                   maxlength="9"
                   prepend-icon="mdi-phone"
@@ -68,7 +68,7 @@
                 <v-text-field
                   :disabled="ver"
                   v-model="Direccion"
-                  label="Direccion Local"
+                  label="Dirección Local"
                   prepend-icon="mdi-map-marker"
                   required
                 ></v-text-field>
@@ -83,7 +83,7 @@
             color="indigo darken-4"
             text
             @click="(dialogEjemplo = false), limpiar()"
-            >Cerrar</v-btn
+            >Cancelar</v-btn
           >
           <v-btn
             v-if="!ver"
@@ -101,17 +101,20 @@
             color="indigo darken-4"
             text
             @click="(dialogEjemplo = false), limpiar()"
-            >Cerrar</v-btn
+            >Cancelar</v-btn
           >
         </v-card-actions>
       </v-card>
     </v-dialog>
     <v-data-table
-      :headers="headers2"
+      :headers="headers"
       :items="locales"
       :search="search"
       :item-class="itemFilaColor"
     >
+      <template v-slot:[`item.index`]="{ item }">
+        {{ locales.indexOf(item) + 1 }}
+      </template>
       <template v-slot:[`item.actions`]="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -120,7 +123,7 @@
               v-on="on"
               class="mr-2"
               color="blue-grey"
-              @click="showEditLocal(item)"
+              @click="showactualizar(item)"
               >mdi-pencil</v-icon
             >
           </template>
@@ -132,10 +135,10 @@
               v-bind="attrs"
               v-on="on"
               class="mr-2"
-              :color="item.Vigencia ? 'red lighten-1' : 'blue darken-2'"
+              :color="item.Vigencia ? 'red lighten-1' : 'mdi-close-circle-outline' "
               @click="deleteLocal(item)"
               >{{
-                item.Vigencia ? "mdi-do-not-disturb" : "mdi-check-box-outline"
+                item.Vigencia ? "mdi-do-not-disturb" : "mdi-checkbox-marked-circle-outline"
               }}</v-icon
             >
           </template>
@@ -148,6 +151,7 @@
 
 <script>
 import { get, enviarConArchivos, patch } from "../api/api";
+import Swal from "sweetalert2";
 
 export default {
   //components: {
@@ -162,7 +166,8 @@ export default {
       saveLoading: false,
       dialogEjemplo: false,
       itemsEmpresa: [],
-      headers: [
+      headers:[
+        {text: "Nº", value: "index", width: "10%" },
         {
           text: "Nombre",
           align: "start",
@@ -171,7 +176,7 @@ export default {
           width: "20%",
         },
         { text: "Dirección", value: "Direccion", width: "30%" },
-        { text: "Telefono", value: "Telefono", width: "40%" },
+        { text: "Teléfono", value: "Telefono", width: "30%" },
         { text: "Acciones", value: "actions", width: "10%" },
       ],
       headers2: [
@@ -182,14 +187,14 @@ export default {
           value: "Nombre",
         },
         { text: "Dirección", value: "Direccion" },
-        { text: "Telefono", value: "Telefono" },
+        { text: "Teléfono", value: "Telefono" },
         { text: "Acciones", value: "actions" },
       ],
       options2: [
         {
           name: "Ver",
           icon: "mdi-eye",
-          function: this.showEditLocal,
+          function: this.showactualizar,
         },
         {
           name: "Cambiar vigencia",
@@ -201,7 +206,7 @@ export default {
         {
           name: "Editar",
           icon: "mdi-pencil",
-          function: this.showEditLocal,
+          function: this.showactualizar,
         },
         {
           name: "Eliminar",
@@ -232,7 +237,7 @@ export default {
       if (this.edit === false) {
         this.registerLocal();
       } else {
-        this.editLocal();
+        this.actualizar();
       }
     },
     itemFilaColor: function (item) {
@@ -251,18 +256,24 @@ export default {
     registerLocal() {
       if (this.valid == false) return;
       this.saveLoading = true;
-      enviarConArchivos("local/nuevo", this.assembleLocal()).then(() => {
+      enviarConArchivos("locales", this.assembleLocal()).then(() => {
         this.saveLoading = false;
         this.dialogEjemplo = false;
         //this.$refs.localTable.fetchData();
         this.limpiar();
+        Swal.fire({
+          title:"Sistema",
+          text:"Local registrado correctamente.",
+          icon:"éxito",
+          confirmButtonText:"Aceptar",
+        });
         this.actualizarLocales();
       });
     },
-    editLocal() {
+    actualizar() {
       if (this.valid == false) return;
       this.saveLoading = true;
-      enviarConArchivos("local/edit/" + this.editId, this.assembleLocal())
+      enviarConArchivos("locales/" + this.editId, this.assembleLocal())
         .then(() => {
           this.saveLoading = false;
           this.editId = null;
@@ -270,35 +281,48 @@ export default {
           this.actualizarLocales();
           //this.$refs.localTable.fetchData();
           this.limpiar();
+            Swal.fire({
+          title:"Sistema",
+          text:"Local actualizado correctamente.",
+          icon:"éxito",
+          confirmButtonText:"Aceptar",
+        });
         })
         .catch(() => {
           this.alert = true;
         });
     },
-    showEditLocal(local) {
+    showactualizar(Local) {
       this.edit = true;
-      this.editId = local.Codigo;
-      this.mostrarLocal(local.Codigo).then(() => {
+      this.editId = Local.Codigo;
+      this.mostrarLocal(Local.Codigo).then(() => {
         this.dialogEjemplo = true;
       });
     },
-    verLocal(local) {
+    verLocal(Local) {
       this.ver = true;
-      this.mostrarLocal(local.Codigo).then(() => {
+      this.mostrarLocal(Local.Codigo).then(() => {
         this.dialogEjemplo = true;
       });
     },
-    deleteLocal(local) {
-      patch("local/" + local.Codigo)
+    deleteLocal(Local) {
+      patch("locales/" + Local.Codigo)
         .then(() => {
+            Swal.fire({
+          title:"Sistema",
+          text:"Local actualizado correctamente.",
+          icon: "éxito",
+          confirmButtonText: "Aceptar",
+        });
           this.actualizarLocales();
         })
-        .catch(() => {
-          this.alert = true;
-        });
+        //.catch(() => {
+          //this.alert = true;
+        //});
+        .catch (() => {});
     },
-    cambiarEstadoLocal(local) {
-      patch("local/" + local.Codigo)
+    cambiarEstadoLocal(Local) {
+      patch("locales/" + Local.Codigo)
         .then(() => {
           this.actualizarLocales();
         })
@@ -308,24 +332,24 @@ export default {
     },
 
     actualizarLocales() {
-      get("local/lista").then((data) => {
+      get("locales").then((data) => {
         this.locales = data;
       });
     },
 
     mostrarEmpresas() {
-      get("local/Empresas").then((data) => {
+      get("Local/Empresas").then((data) => {
         this.itemsEmpresa = data;
         console.log(data);
       });
     },
 
     async mostrarLocal(codigo) {
-      const local = await get("local/buscar/Codigo/" + codigo);
-      this.codigo = local.codigo;
-      this.Nombre = local.Nombre;
-      this.Direccion = local.Direccion;
-      this.Telefono = local.Telefono;
+      const Local = await get("locales/" + codigo);
+      this.codigo = Local.codigo;
+      this.Nombre = Local.Nombre;
+      this.Direccion = Local.Direccion;
+      this.Telefono = Local.Telefono;
     },
   },
   created() {
@@ -337,3 +361,4 @@ export default {
 
 <style>
 </style>
+<style></style>
