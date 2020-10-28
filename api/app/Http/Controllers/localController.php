@@ -17,10 +17,10 @@ class LocalController extends Controller
         $Local->Telefono = $resquest->Telefono;
         $Local->Vigencia = 1;
         $Local->save();
-        $data = [
+        $dato = [
             "Registro" => "EXITOSO"
         ];
-        return response()->json($data, 200);
+        return response()->json($dato, 200);
     }
 
     public function actualizar(REQUEST $resquest, $Codigo)
@@ -33,47 +33,47 @@ class LocalController extends Controller
             $Local->Telefono = $resquest->Telefono;
             $Local->Vigencia = 1;
             $Local->save();
-            $data = [
+            $dato = [
                 "Modificacion" => "EXITOSO"
             ];
-            return response()->json($data, 200);
+            return response()->json($dato, 200);
         }else{
-            $data = [
+            $dato = [
                 "Modificacion" => "FALLO"
             ];
-            return response()->json($data, 500);
+            return response()->json($dato, 500);
         }
         
     }
 
     public function Listar()
     {
-        $data = Local::all();
-        return response()->json($data, 200);
+        $dato = Local::all();
+        return response()->json($dato, 200);
     }    
 
     public function Buscar($Nombre)
     {
-        $data = Local::where('Nombre','LIKE','%'.$Nombre.'%')->get();
-        return response()->json($data, 200);
+        $dato = Local::where('Nombre','LIKE','%'.$Nombre.'%')->get();
+        return response()->json($dato, 200);
     }
 
     public function BuscarCodigo($Codigo)
     {
-        $data = Local::find($Codigo);
-        return response()->json($data, 200);
+        $dato = Local::find($Codigo);
+        return response()->json($dato, 200);
     }
 
     public function BuscarLocalEmpresa($CodigoEmpresa)
     {
-        $data = Local::where('codigoEmpresa','=',$CodigoEmpresa)->get();
-        return response()->json($data, 200);
+        $dato = Local::where('codigoEmpresa','=',$CodigoEmpresa)->get();
+        return response()->json($dato, 200);
     }
 
     public function Eliminar($Codigo)
     {
-        $data = Local::find($Codigo);
-        $data->delete();
+        $dato = Local::find($Codigo);
+        $dato->delete();
         return response()->json(true, 200);
     }
 
@@ -92,11 +92,13 @@ class LocalController extends Controller
 
     public function cambiarEstadoLocal($Codigo)
     {
+        $vigencia = -1;
         $Local = Local::findOrFail($Codigo);
         $Local->Vigencia = !$Local->Vigencia;
+        $vigencia =!$Local->Vigencia;
         $Local->save();
 
-        return response()->json($Local, 200);
+        return response()->json($vigencia, 200);
     }
 
 }

@@ -172,7 +172,7 @@ export default {
         {
           text: "Nombre",
           align: "start",
-          sortable: false,
+          // sortable: false,
           value: "Nombre",
           width: "25%",
           class: 'light blue darken-4 white--text',
@@ -185,7 +185,7 @@ export default {
         {
           text: "Nombre",
           align: "start",
-          sortable: false,
+          // sortable: false,
           value: "Nombre",
         },
         { text: "Dirección", value: "Direccion" },
@@ -309,13 +309,23 @@ export default {
     },
     deleteLocal(Local) {
       patch("locales/" + Local.Codigo)
-        .then(() => {
-            Swal.fire({
-          title:"Sistema",
-          text:"Local dado de baja exitosamente.",
-          icon: "éxito",
-          confirmButtonText: "Aceptar",
-        });
+        .then((data) => {
+          console.log(data);
+            if(data == false){
+              Swal.fire({
+                title:"Sistema",
+                text:"Local dado de alta exitosamente.",
+                icon: "éxito",
+                confirmButtonText: "Aceptar",
+              });
+            }else{
+              Swal.fire({
+                title:"Sistema",
+                text:"Local dado de baja exitosamente.",
+                icon: "éxito",
+                confirmButtonText: "Aceptar",
+              });
+            }
           this.actualizarLocales();
         })
         //.catch(() => {
