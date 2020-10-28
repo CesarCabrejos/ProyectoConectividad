@@ -107,6 +107,7 @@
       </v-card>
     </v-dialog>
     <v-data-table
+      background= "blue darken-3"
       :headers="headers"
       :items="locales"
       :search="search"
@@ -135,10 +136,10 @@
               v-bind="attrs"
               v-on="on"
               class="mr-2"
-              :color="item.Vigencia ? 'red lighten-1' : 'mdi-close-circle-outline' "
+              :color="item.Vigencia ? 'red lighten-1' : 'green' "
               @click="deleteLocal(item)"
               >{{
-                item.Vigencia ? "mdi-do-not-disturb" : "mdi-checkbox-marked-circle-outline"
+                item.Vigencia ? "mdi-close-circle-outline" : "mdi-checkbox-marked-circle-outline"
               }}</v-icon
             >
           </template>
@@ -167,17 +168,18 @@ export default {
       dialogEjemplo: false,
       itemsEmpresa: [],
       headers:[
-        {text: "Nº", value: "index", width: "10%" },
+        {text: "Nº", value: "index", width: "10%", class: 'light blue darken-4 white--text' },
         {
           text: "Nombre",
           align: "start",
           sortable: false,
           value: "Nombre",
-          width: "20%",
+          width: "25%",
+          class: 'light blue darken-4 white--text',
         },
-        { text: "Dirección", value: "Direccion", width: "30%" },
-        { text: "Teléfono", value: "Telefono", width: "30%" },
-        { text: "Acciones", value: "actions", width: "10%" },
+        { text: "Dirección", value: "Direccion", width: "30%", class: 'light blue darken-4 white--text' },
+        { text: "Teléfono", value: "Telefono", width: "20%", class: 'light blue darken-4 white--text' },
+        { text: "Acciones", value: "actions", width: "15%", class: 'light blue darken-4 white--text' },
       ],
       headers2: [
         {
@@ -263,7 +265,7 @@ export default {
         this.limpiar();
         Swal.fire({
           title:"Sistema",
-          text:"Local registrado correctamente.",
+          text:"Local registrado exitosamente.",
           icon:"éxito",
           confirmButtonText:"Aceptar",
         });
@@ -283,7 +285,7 @@ export default {
           this.limpiar();
             Swal.fire({
           title:"Sistema",
-          text:"Local actualizado correctamente.",
+          text:"Local actualizado exitosamente.",
           icon:"éxito",
           confirmButtonText:"Aceptar",
         });
@@ -310,7 +312,7 @@ export default {
         .then(() => {
             Swal.fire({
           title:"Sistema",
-          text:"Local actualizado correctamente.",
+          text:"Local dado de baja exitosamente.",
           icon: "éxito",
           confirmButtonText: "Aceptar",
         });
